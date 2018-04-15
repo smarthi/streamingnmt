@@ -1,44 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="38e3f631-9c93-4c0d-91bf-b791d5939ffd" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/externalDependencies.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/Annotation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/LanguageSelector.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/StreamingNmt.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/functions/LanguageDetectorFunction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/functions/SentenceDetectorFunction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/serializer/AnnotationSerializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/dws/berlin/serializer/SpanSerializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/log4j.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-chunker.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-doccat.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-doccat.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-gender.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-ner-person.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-ner.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-parser-chunking.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-pos-maxent.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-pos-perceptron.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-sent.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/en-token.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/langdetect-183.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/por-chunker.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/por-ner.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/por-pos-maxent.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/por-sent.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/opennlp-models/por-token.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/twitter.properties" afterDir="false" />
-    </list>
+    <list default="true" id="38e3f631-9c93-4c0d-91bf-b791d5939ffd" name="Default" comment="Initial Checkin" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -49,11 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="StreamingNmt.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="StreamingNmt.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/StreamingNmt.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="466">
-              <caret line="126" column="1" selection-start-line="126" selection-start-column="1" selection-end-line="126" selection-end-column="1" />
+            <state relative-caret-position="1324">
+              <caret line="148" column="1" lean-forward="true" selection-start-line="148" selection-start-column="1" selection-end-line="148" selection-end-column="1" />
               <folding>
                 <element signature="e#0#2240#0" expanded="true" />
                 <element signature="imports" expanded="true" />
@@ -62,7 +25,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SentenceDetectorFunction.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SentenceDetectorFunction.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/functions/SentenceDetectorFunction.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="255">
@@ -76,6 +39,11 @@
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="twitter.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/twitter.properties">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file leaf-file-name="AnnotationSerializer.java" pinned="false" current-in-tab="false">
@@ -117,8 +85,8 @@
       <file leaf-file-name="LanguageSelector.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/LanguageSelector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
+            <state relative-caret-position="150">
+              <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -167,11 +135,11 @@
         <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/serializer/SpanSerializer.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/berlin/StreamingNmt.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/Annotation.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/LanguageSelector.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/serializer/AnnotationSerializer.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/functions/LanguageDetectorFunction.java" />
-        <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/StreamingNmt.java" />
         <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/functions/SentenceDetectorFunction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/LanguageSelector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/de/dws/berlin/StreamingNmt.java" />
       </list>
     </option>
   </component>
@@ -402,15 +370,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1523725383485</updated>
-      <workItem from="1523725385171" duration="6369000" />
+      <workItem from="1523725385171" duration="6698000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6369000" />
+    <option name="totallyTimeSpent" value="6698000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="43" y="23" width="1637" height="955" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -448,6 +417,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial Checkin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initial Checkin" />
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/BatchJob.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -461,13 +434,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/opennlp-models/en-ner.bin">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/twitter.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="52" selection-start-line="3" selection-start-column="52" selection-end-line="3" selection-end-column="52" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
@@ -490,16 +456,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/berlin/StreamingNmt.java">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/LanguageSelector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/serializer/SpanSerializer.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -541,17 +497,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/StreamingNmt.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="126" column="1" selection-start-line="126" selection-start-column="1" selection-end-line="126" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#2240#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/functions/SentenceDetectorFunction.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -562,6 +507,33 @@
             <element signature="e#370#371#0" expanded="true" />
             <element signature="e#664#665#0" expanded="true" />
             <element signature="e#722#723#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/twitter.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/LanguageSelector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="9" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/de/dws/berlin/StreamingNmt.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1324">
+          <caret line="148" column="1" lean-forward="true" selection-start-line="148" selection-start-column="1" selection-end-line="148" selection-end-column="1" />
+          <folding>
+            <element signature="e#0#2240#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
