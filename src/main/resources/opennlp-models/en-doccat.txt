@@ -1,0 +1,37 @@
+=== Evaluation summary ===
+  Number of sentences:  30330
+    Min sentence size:     49
+    Max sentence size:   6460
+Average sentence size: 274.65
+           Tags count:      5
+             Accuracy: 94.14%
+
+<-end> Evaluation Corpus Statistics
+
+=== Detailed Accuracy By Tag ===
+
+------------------------------------------------------------------------------
+|           Tag | Errors |  Count |   % Err | Precision | Recall | F-Measure |
+------------------------------------------------------------------------------
+|          tech |    508 |   1014 | 0.501   | 0.767     | 0.499  | 0.605     |
+|      business |    464 |  11204 | 0.041   | 0.925     | 0.959  | 0.942     |
+|      politics |    391 |   2164 | 0.181   | 0.869     | 0.819  | 0.843     |
+| entertainment |    249 |   2576 | 0.097   | 0.911     | 0.903  | 0.907     |
+|         sport |    164 |  13372 | 0.012   | 0.981     | 0.988  | 0.984     |
+------------------------------------------------------------------------------
+
+<-end> Tags with the highest number of errors
+
+=== Confusion matrix ===
+
+Tags with 100% accuracy: 
+
+      a       b       c       d       e | Accuracy | <-- classified as
+ <10740>     97     152      88     127 |   -100%  |     a = business
+    101   <2327>     28     105      15 |   -100%  |     b = entertainment
+    317      28   <1773>     38       8 |   -100%  |     c = politics
+     61      58      41  <13208>      4 |   -100%  |     d = sport
+    387      45      46      30    <506>|   -100%  |     e = tech
+
+<-end> Confusion matrix
+
