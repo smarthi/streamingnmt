@@ -105,7 +105,15 @@ public class StreamingNmt {
     // Create a DataStream from TwitterSource filtered by deleted tweets
     DataStream<Tweet> twitterStream = env.addSource(new TwitterSource(props))
         .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
-        .flatMap(new TweetJsonConverter());
+        .flatMap(new TweetJsonConverter())
+        .filter(new FilterFunction<Tweet>() {
+          List<String> langList =
+              Stream.of(props.getProperty("twitter-source.langs")).collect(Collectors.toList());
+          @Override
+          public boolean filter(Tweet value) {
+            return langList.contains(value.getLanguage());
+          }
+        });
 
     twitterStream.print();
 
