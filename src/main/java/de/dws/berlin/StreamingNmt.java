@@ -29,12 +29,9 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.endpoint.StreamingEndpoint;
 import de.dws.berlin.serializer.AnnotationSerializer;
 import de.dws.berlin.serializer.SpanSerializer;
+import de.dws.berlin.twitter.TweetJsonConverter;
 import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.hadoop.shaded.org.codehaus.jackson.JsonNode;
-import org.apache.flink.hadoop.shaded.org.codehaus.jackson.map.ObjectMapper;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -74,12 +71,12 @@ public class StreamingNmt {
   private static DoccatModel engDoccatModel;
 
   private static void initializeModels() throws IOException {
-    engSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/en-sent.bin"));
-    engTokenizerModel = new TokenizerModel(StreamingNmt.class.getResource("/opennlp-models/en-token.bin"));
-    engPosModel= new POSModel(StreamingNmt.class.getResource("/opennlp-models/en-pos-perceptron.bin"));
-    engChunkModel = new ChunkerModel(StreamingNmt.class.getResource("/opennlp-models/en-chunker.bin"));
-    engNerPersonModel = new TokenNameFinderModel(StreamingNmt.class.getResource("/opennlp-models/en-ner.bin"));
-    engDoccatModel = new DoccatModel(StreamingNmt.class.getResource("/opennlp-models/en-doccat.bin"));
+//    engSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/en-sent.bin"));
+//    engTokenizerModel = new TokenizerModel(StreamingNmt.class.getResource("/opennlp-models/en-token.bin"));
+//    engPosModel= new POSModel(StreamingNmt.class.getResource("/opennlp-models/en-pos-perceptron.bin"));
+//    engChunkModel = new ChunkerModel(StreamingNmt.class.getResource("/opennlp-models/en-chunker.bin"));
+//    engNerPersonModel = new TokenNameFinderModel(StreamingNmt.class.getResource("/opennlp-models/en-ner.bin"));
+//    engDoccatModel = new DoccatModel(StreamingNmt.class.getResource("/opennlp-models/en-doccat.bin"));
   }
 
   public static void main(String[] args) throws Exception {
@@ -102,12 +99,13 @@ public class StreamingNmt {
     Properties props = new Properties();
     props.load(StreamingNmt.class.getResourceAsStream("/twitter.properties"));
     TwitterSource twitterSource = new TwitterSource(props);
-    twitterSource.setCustomEndpointInitializer(new StreamingNmt.FilterEndpoint(""));
+    twitterSource.setCustomEndpointInitializer(
+        new StreamingNmt.FilterEndpoint("#ShakespeareSunday, #SundayMotivation"));
 
     // Create a DataStream from TwitterSource filtered by deleted tweets
-    DataStream<String> twitterStream = env.addSource(new TwitterSource(props))
-        .filter((FilterFunction<String>) value -> value.contains("created-at"))
-        .map(new StreamingNmt.JsonConverter());
+    DataStream<Tweet> twitterStream = env.addSource(new TwitterSource(props))
+        .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
+        .flatMap(new TweetJsonConverter());
 
     twitterStream.print();
 
@@ -128,22 +126,6 @@ public class StreamingNmt {
       StatusesFilterEndpoint ep = new StatusesFilterEndpoint();
       ep.trackTerms(tags);
       return ep;
-    }
-  }
-
-  private static class JsonConverter extends RichMapFunction<String,String> {
-    private transient ObjectMapper mapper;
-
-    @Override
-    public void open(Configuration parameters) throws Exception {
-      super.open(parameters);
-      mapper = new ObjectMapper();
-    }
-
-    @Override
-    public String map(String value) throws Exception {
-      JsonNode tweet = mapper.readValue(value, JsonNode.class);
-      return tweet.get("text").asText();
     }
   }
 }
