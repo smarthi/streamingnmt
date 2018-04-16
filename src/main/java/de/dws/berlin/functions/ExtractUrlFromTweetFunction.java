@@ -20,7 +20,7 @@ public class ExtractUrlFromTweetFunction extends RichFlatMapFunction<Tweet, Tupl
     String tweet = value.getText();
 
     int startIndex = tweet.indexOf("https://", 0);
-    while (startIndex > -1) {
+    while (startIndex >= 0 && startIndex < tweet.length()) {
       int endIndex = tweet.indexOf(" ", startIndex);
       urlList.add(tweet.substring(startIndex, endIndex));
       startIndex = endIndex;

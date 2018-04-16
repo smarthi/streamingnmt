@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,20 +66,11 @@ public class StreamingNmt {
 
   private static final Logger LOG = LoggerFactory.getLogger(StreamingNmt.class);
 
-  private static SentenceModel engSentenceModel;
-  private static TokenizerModel engTokenizerModel;
-  private static POSModel engPosModel;
-  private static ChunkerModel engChunkModel;
-  private static TokenNameFinderModel engNerPersonModel;
-  private static DoccatModel engDoccatModel;
+  private static SentenceModel engSentenceModel, deSentenceModel;
 
   private static void initializeModels() throws IOException {
-//    engSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/en-sent.bin"));
-//    engTokenizerModel = new TokenizerModel(StreamingNmt.class.getResource("/opennlp-models/en-token.bin"));
-//    engPosModel= new POSModel(StreamingNmt.class.getResource("/opennlp-models/en-pos-perceptron.bin"));
-//    engChunkModel = new ChunkerModel(StreamingNmt.class.getResource("/opennlp-models/en-chunker.bin"));
-//    engNerPersonModel = new TokenNameFinderModel(StreamingNmt.class.getResource("/opennlp-models/en-ner.bin"));
-//    engDoccatModel = new DoccatModel(StreamingNmt.class.getResource("/opennlp-models/en-doccat.bin"));
+    engSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/en-sent.bin"));
+    deSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/de-sent.bin"));
   }
 
   public static void main(String[] args) throws Exception {
@@ -104,19 +96,18 @@ public class StreamingNmt {
 //    twitterSource.setCustomEndpointInitializer(
 //        new StreamingNmt.FilterEndpoint("#ShakespeareSunday, #SundayMotivation"));
 
+    Set<String> langList = Stream.of(props.getProperty("twitter-source.langs"))
+        .collect(Collectors.toSet());
+
     // Create a DataStream from TwitterSource filtered by deleted tweets
-    DataStream<Tuple2<String, List<String>>> twitterStream = env.addSource(twitterSource)
+    // filter for en tweets
+    DataStream<Tweet> twitterStream = env.addSource(twitterSource)
         .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
         .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
-        .filter(new FilterFunction<Tweet>() {   // filter for en tweets
-          List<String> langList =
-              Stream.of(props.getProperty("twitter-source.langs")).collect(Collectors.toList());
-          @Override
-          public boolean filter(Tweet value) {
-            return langList.contains(value.getLanguage());
-          }
-        }).filter((FilterFunction<Tweet>) value -> value.getText().contains("https://")) // filter for tweets containing a URL
-        .flatMap(new ExtractUrlFromTweetFunction()); // extract URL from tweet, return a Tuple2<Tweet Id, List<URL>>
+        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage()))
+        .filter((FilterFunction<Tweet>) value -> value.getText().contains("https://")); // filter for tweets containing a URL
+
+
 
     twitterStream.print();
 
