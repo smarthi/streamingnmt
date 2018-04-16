@@ -29,8 +29,8 @@ public class TweetJsonConverter extends RichFlatMapFunction<String,Tweet> {
     }
 
     if (tweetString != null) {
-      out.collect(new Tweet(tweet.get("text").asText(),
-          tweet.get("lang").asText(), tweet.get("user").getTextValue()));
+      out.collect(new Tweet(tweet.get("id").asText(), tweet.get("text").asText(),
+          tweet.get("lang").asText(), tweet.get("user").asText()));
     }
   }
 }

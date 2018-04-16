@@ -27,10 +27,12 @@ import java.util.stream.Stream;
 
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.endpoint.StreamingEndpoint;
+import de.dws.berlin.functions.ExtractUrlFromTweetFunction;
 import de.dws.berlin.serializer.AnnotationSerializer;
 import de.dws.berlin.serializer.SpanSerializer;
 import de.dws.berlin.twitter.TweetJsonConverter;
 import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -99,21 +101,22 @@ public class StreamingNmt {
     Properties props = new Properties();
     props.load(StreamingNmt.class.getResourceAsStream("/twitter.properties"));
     TwitterSource twitterSource = new TwitterSource(props);
-    twitterSource.setCustomEndpointInitializer(
-        new StreamingNmt.FilterEndpoint("#ShakespeareSunday, #SundayMotivation"));
+//    twitterSource.setCustomEndpointInitializer(
+//        new StreamingNmt.FilterEndpoint("#ShakespeareSunday, #SundayMotivation"));
 
     // Create a DataStream from TwitterSource filtered by deleted tweets
-    DataStream<Tweet> twitterStream = env.addSource(new TwitterSource(props))
+    DataStream<Tuple2<String, List<String>>> twitterStream = env.addSource(twitterSource)
         .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
-        .flatMap(new TweetJsonConverter())
-        .filter(new FilterFunction<Tweet>() {
+        .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
+        .filter(new FilterFunction<Tweet>() {   // filter for en tweets
           List<String> langList =
               Stream.of(props.getProperty("twitter-source.langs")).collect(Collectors.toList());
           @Override
           public boolean filter(Tweet value) {
             return langList.contains(value.getLanguage());
           }
-        });
+        }).filter((FilterFunction<Tweet>) value -> value.getText().contains("https://")) // filter for tweets containing a URL
+        .flatMap(new ExtractUrlFromTweetFunction()); // extract URL from tweet, return a Tuple2<Tweet Id, List<URL>>
 
     twitterStream.print();
 
