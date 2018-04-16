@@ -67,10 +67,13 @@ public class StreamingNmt {
   private static final Logger LOG = LoggerFactory.getLogger(StreamingNmt.class);
 
   private static SentenceModel engSentenceModel, deSentenceModel;
+  private static TokenizerModel engTokenizerModel, deTokenizerModel;
 
   private static void initializeModels() throws IOException {
     engSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/en-sent.bin"));
     deSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/de-sent.bin"));
+    engTokenizerModel = new TokenizerModel(StreamingNmt.class.getResource("/opennlp-models/en-token.bin"));
+    deTokenizerModel = new TokenizerModel((StreamingNmt.class.getResource("/opennlp-models/de-token.bin")));
   }
 
   public static void main(String[] args) throws Exception {
@@ -106,7 +109,6 @@ public class StreamingNmt {
         .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
         .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage()))
         .filter((FilterFunction<Tweet>) value -> value.getText().contains("https://")); // filter for tweets containing a URL
-
 
 
     twitterStream.print();
