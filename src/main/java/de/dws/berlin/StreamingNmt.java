@@ -28,7 +28,10 @@ import java.util.stream.Stream;
 
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.endpoint.StreamingEndpoint;
+import de.dws.berlin.functions.ExtractTextFromHTML;
 import de.dws.berlin.functions.ExtractUrlFromTweetFunction;
+import de.dws.berlin.functions.LanguageDetectorFunction;
+import de.dws.berlin.functions.SentenceDetectorFunction;
 import de.dws.berlin.serializer.AnnotationSerializer;
 import de.dws.berlin.serializer.SpanSerializer;
 import de.dws.berlin.twitter.TweetJsonConverter;
@@ -37,6 +40,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.twitter.TwitterSource;
 import org.slf4j.Logger;
@@ -72,7 +76,7 @@ public class StreamingNmt {
   private static void initializeModels() throws IOException {
     engSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/en-sent.bin"));
     deSentenceModel = new SentenceModel(StreamingNmt.class.getResource("/opennlp-models/de-sent.bin"));
-    engTokenizerModel = new TokenizerModel(StreamingNmt.class.getResource("/opennlp-models/en-token.bin"));
+//    engTokenizerModel = new TokenizerModel(StreamingNmt.class.getResource("/opennlp-models/en-token.bin"));
     deTokenizerModel = new TokenizerModel((StreamingNmt.class.getResource("/opennlp-models/de-token.bin")));
   }
 
@@ -104,11 +108,29 @@ public class StreamingNmt {
 
     // Create a DataStream from TwitterSource filtered by deleted tweets
     // filter for en tweets
-    DataStream<Tweet> twitterStream = env.addSource(twitterSource)
+    DataStream<String> twitterStream = env.addSource(twitterSource)
         .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
         .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
-        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage()))
-        .filter((FilterFunction<Tweet>) value -> value.getText().contains("https://")); // filter for tweets containing a URL
+           // filter for tweets containing a URL
+        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage()) && value.getText().contains("https://"))
+        // extract URL from tweet text
+        .flatMap(new ExtractUrlFromTweetFunction())
+        // extract html body content from URL
+        .flatMap(new ExtractTextFromHTML())
+        // filter for URL redirects to tweets or zero content
+        .filter((FilterFunction<String>) value -> value.length() > 0);
+
+   /// Language Detect and Split
+    SplitStream<String> splitStream = twitterStream.map(new LanguageDetectorFunction())
+        .split(new LanguageSelector());
+
+    splitStream.select("deu")
+        .map(new SentenceDetectorFunction(deSentenceModel));
+
+    // call thrift client with a window
+    //
+
+
 
 
     twitterStream.print();

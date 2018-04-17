@@ -1,15 +1,13 @@
 package de.dws.berlin.functions;
 
-import de.dws.berlin.Annotation;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
 
-import opennlp.tools.langdetect.Language;
 import opennlp.tools.langdetect.LanguageDetector;
 import opennlp.tools.langdetect.LanguageDetectorME;
 import opennlp.tools.langdetect.LanguageDetectorModel;
 
-public class LanguageDetectorFunction extends RichMapFunction<Annotation,Annotation> {
+public class LanguageDetectorFunction extends RichMapFunction<String,String> {
 
   private transient LanguageDetector languageDetector;
 
@@ -20,9 +18,7 @@ public class LanguageDetectorFunction extends RichMapFunction<Annotation,Annotat
   }
 
   @Override
-  public Annotation map(Annotation value) {
-    Language language = languageDetector.predictLanguage(value.getSofa());
-    value.setLanguage(language.getLang());
-    return value;
+  public String map(String text) {
+    return languageDetector.predictLanguage(text).getLang();
   }
 }

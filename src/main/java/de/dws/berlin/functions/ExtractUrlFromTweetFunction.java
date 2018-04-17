@@ -1,30 +1,28 @@
 package de.dws.berlin.functions;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.dws.berlin.Tweet;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 
-public class ExtractUrlFromTweetFunction extends RichFlatMapFunction<Tweet, Tuple2<String, List<String>>> {
+public class ExtractUrlFromTweetFunction extends RichFlatMapFunction<Tweet, List<String>> {
 
   @Override
-  public void flatMap(Tweet value, Collector<Tuple2<String, List<String>>> collector) {
-    List<String> urlList = new ArrayList<>();
-    String tweet = value.getText();
+  public void flatMap(Tweet value, Collector<List<String>> collector) {
+    List<String> containedUrls = new ArrayList<>();
+    String urlRegex = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
+    Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
+    Matcher urlMatcher = pattern.matcher(value.getText());
 
-    int startIndex = tweet.indexOf("https://", 0);
-    while (startIndex >= 0 && startIndex < tweet.length()) {
-      int endIndex = tweet.indexOf(" ", startIndex);
-      urlList.add(tweet.substring(startIndex, endIndex));
-      startIndex = endIndex;
+    while (urlMatcher.find()) {
+      containedUrls.add(value.getText().substring(urlMatcher.start(0), urlMatcher.end(0)));
     }
-    collector.collect(new Tuple2<>(value.getId(), urlList));
+
+    collector.collect(containedUrls);
   }
 }

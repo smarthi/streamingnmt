@@ -8,7 +8,7 @@ import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 
-public class SentenceDetectorFunction extends RichMapFunction<Annotation,Annotation> {
+public class SentenceDetectorFunction extends RichMapFunction<String, String[]> {
 
   private transient SentenceDetector sentenceDetector;
   private final SentenceModel model;
@@ -23,9 +23,9 @@ public class SentenceDetectorFunction extends RichMapFunction<Annotation,Annotat
   }
 
   @Override
-  public Annotation map(Annotation annotation) {
-    annotation.setSentences(sentenceDetector.sentPosDetect(annotation.getSofa()));
-    return annotation;
+  public String[] map(String text) {
+    return sentenceDetector.sentDetect(text);
+
   }
 }
 
