@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.dws.berlin.Tweet;
+import de.dws.berlin.TweetURLMatcher;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 
 import org.apache.flink.util.Collector;
@@ -15,10 +16,7 @@ public class ExtractUrlFromTweetFunction extends RichFlatMapFunction<Tweet, List
   @Override
   public void flatMap(Tweet value, Collector<List<String>> collector) {
     List<String> containedUrls = new ArrayList<>();
-    String urlRegex = "((https?|ftp|gopher|telnet|file):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
-    Pattern pattern = Pattern.compile(urlRegex, Pattern.CASE_INSENSITIVE);
-    Matcher urlMatcher = pattern.matcher(value.getText());
-
+    Matcher urlMatcher = TweetURLMatcher.checkUrlMatcherInTweet(value);
     while (urlMatcher.find()) {
       containedUrls.add(value.getText().substring(urlMatcher.start(0), urlMatcher.end(0)));
     }

@@ -26,30 +26,25 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import akka.remote.serialization.ProtobufSerializer;
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.endpoint.StreamingEndpoint;
-import de.dws.berlin.functions.ExtractTextFromHTML;
-import de.dws.berlin.functions.ExtractUrlFromTweetFunction;
-import de.dws.berlin.functions.LanguageDetectorFunction;
 import de.dws.berlin.functions.SentenceDetectorFunction;
-import de.dws.berlin.serializer.AnnotationSerializer;
+import de.dws.berlin.functions.SockeyeTranslateFunction;
 import de.dws.berlin.serializer.SpanSerializer;
 import de.dws.berlin.twitter.TweetJsonConverter;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.twitter.TwitterSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import opennlp.tools.chunker.ChunkerModel;
-import opennlp.tools.doccat.DoccatModel;
-import opennlp.tools.namefind.TokenNameFinderModel;
-import opennlp.tools.postag.POSModel;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.Span;
@@ -92,8 +87,8 @@ public class StreamingNmt {
             .setMaxParallelism(10);
 
     env.getConfig().enableObjectReuse();
-    env.getConfig().registerTypeWithKryoSerializer(Annotation.class, AnnotationSerializer.class);
     env.getConfig().registerTypeWithKryoSerializer(Span.class, SpanSerializer.class);
+//    env.getConfig().registerTypeWithKryoSerializer(MyCustomType.class, ProtobufSerializer.class);
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
 
     // twitter credentials and source
@@ -108,32 +103,31 @@ public class StreamingNmt {
 
     // Create a DataStream from TwitterSource filtered by deleted tweets
     // filter for en tweets
-    DataStream<String> twitterStream = env.addSource(twitterSource)
+    DataStream<Tweet> twitterStream = env.addSource(twitterSource)
         .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
         .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
+        .filter((FilterFunction<Tweet>) tweet -> langList.contains(tweet.getLanguage()) &&
+        tweet.getText().length() > 0);
            // filter for tweets containing a URL
-        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage()) && value.getText().contains("https://"))
-        // extract URL from tweet text
-        .flatMap(new ExtractUrlFromTweetFunction())
-        // extract html body content from URL
-        .flatMap(new ExtractTextFromHTML())
+//        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage())
+//            && TweetURLMatcher.checkUrlInTweet(value))
+//        // extract URL from tweet text
+//        .flatMap(new ExtractUrlFromTweetFunction())
+//        // extract html body content from URL
+//        .flatMap(new ExtractTextFromHTML())
         // filter for URL redirects to tweets or zero content
-        .filter((FilterFunction<String>) value -> value.length() > 0);
+//        .((FilterFunction<Tweet>) value -> value.getText().length() > 0);
 
    /// Language Detect and Split
-    SplitStream<String> splitStream = twitterStream.map(new LanguageDetectorFunction())
-        .split(new LanguageSelector());
+//    SplitStream<String> splitStream = twitterStream.map(new LanguageDetectorFunction())
+//        .split(new LanguageSelector());
 
-    splitStream.select("deu")
-        .map(new SentenceDetectorFunction(deSentenceModel));
+    DataStream<Tuple2<String, String>> sentenceStream =
+        twitterStream.map(new SentenceDetectorFunction(deSentenceModel))
+        .timeWindowAll(Time.seconds(300))
+        .apply(new SockeyeTranslateFunction());
 
-    // call thrift client with a window
-    //
-
-
-
-
-    twitterStream.print();
+    sentenceStream.writeAsCsv("/tmp/crapshit", FileSystem.WriteMode.OVERWRITE);
 
 
     // execute program

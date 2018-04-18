@@ -71,11 +71,6 @@ public class Tweet implements Serializable {
 
   @Override
   public String toString() {
-    return "Tweet{" +
-        "id='" + id + '\'' +
-        ", text='" + text + '\'' +
-        ", language='" + language + '\'' +
-        ", user='" + user + '\'' +
-        '}';
+    return text.trim();
   }
 }

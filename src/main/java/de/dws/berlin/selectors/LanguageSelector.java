@@ -1,4 +1,4 @@
-package de.dws.berlin;
+package de.dws.berlin.selectors;
 
 import java.util.Collections;
 import java.util.Set;
