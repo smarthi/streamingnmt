@@ -71,11 +71,6 @@ under the License.
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-table_${scala.version}</artifactId>
-			<version>${flink.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-scala_${scala.version}</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
@@ -96,11 +91,7 @@ under the License.
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.flink</groupId>
-			<artifactId>flink-connector-kafka-0.11_${scala.version}</artifactId>
-			<version>${flink.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-twitter_${scala.version}</artifactId>
@@ -152,18 +143,6 @@ under the License.
 			<groupId>org.apache.opennlp</groupId>
 			<artifactId>opennlp-tools</artifactId>
 			<version>${opennlp.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.elasticsearch.client</groupId>
-			<artifactId>transport</artifactId>
-			<version>5.6.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.tensorflow</groupId>
-			<artifactId>tensorflow</artifactId>
-			<version>1.1.0</version>
 		</dependency>
 
 		<dependency>

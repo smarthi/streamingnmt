@@ -54,7 +54,6 @@ public class SockeyeTranslateFunction extends RichAllWindowFunction<Tuple2<Strin
 
     for (String sentence : sentencesList) {
       String translatedString = translateClient.translate(sentence);
-      System.out.println(sentence + " :: Translation =  " + translatedString.replaceAll("@@ ", ""));
       collector.collect(new Tuple2<>(sentence, translatedString.replaceAll("@@ ", "")));
     }
   }

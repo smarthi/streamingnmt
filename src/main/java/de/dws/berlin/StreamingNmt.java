@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import akka.remote.serialization.ProtobufSerializer;
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.endpoint.StreamingEndpoint;
 import de.dws.berlin.functions.SentenceDetectorFunction;
@@ -36,7 +35,6 @@ import de.dws.berlin.twitter.TweetJsonConverter;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
-import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -82,13 +80,10 @@ public class StreamingNmt {
     ParameterTool parameterTool = ParameterTool.fromArgs(args);
 
     final StreamExecutionEnvironment env =
-        StreamExecutionEnvironment.getExecutionEnvironment()
-            .setParallelism(parameterTool.getInt("parallelism", 1))
-            .setMaxParallelism(10);
+        StreamExecutionEnvironment.getExecutionEnvironment();
 
     env.getConfig().enableObjectReuse();
     env.getConfig().registerTypeWithKryoSerializer(Span.class, SpanSerializer.class);
-//    env.getConfig().registerTypeWithKryoSerializer(MyCustomType.class, ProtobufSerializer.class);
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
 
     // twitter credentials and source
@@ -107,7 +102,7 @@ public class StreamingNmt {
         .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
         .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
         .filter((FilterFunction<Tweet>) tweet -> langList.contains(tweet.getLanguage()) &&
-        tweet.getText().length() > 0);
+        tweet.getText().length() > 100);
            // filter for tweets containing a URL
 //        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage())
 //            && TweetURLMatcher.checkUrlInTweet(value))
@@ -124,11 +119,10 @@ public class StreamingNmt {
 
     DataStream<Tuple2<String, String>> sentenceStream =
         twitterStream.map(new SentenceDetectorFunction(deSentenceModel))
-        .timeWindowAll(Time.seconds(300))
+        .timeWindowAll(Time.seconds(100))
         .apply(new SockeyeTranslateFunction());
 
-    sentenceStream.writeAsCsv("/tmp/crapshit", FileSystem.WriteMode.OVERWRITE);
-
+    sentenceStream.print();
 
     // execute program
     env.execute("Executing Streaming Machine Translation");
