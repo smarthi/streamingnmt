@@ -28,8 +28,10 @@ import java.util.stream.Stream;
 
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.endpoint.StreamingEndpoint;
+import de.dws.berlin.functions.LanguageDetectorFunction;
 import de.dws.berlin.functions.SentenceDetectorFunction;
 import de.dws.berlin.functions.SockeyeTranslateFunction;
+import de.dws.berlin.selectors.LanguageSelector;
 import de.dws.berlin.serializer.SpanSerializer;
 import de.dws.berlin.twitter.TweetJsonConverter;
 import org.apache.flink.api.common.functions.FilterFunction;
@@ -37,6 +39,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.twitter.TwitterSource;
@@ -99,21 +102,11 @@ public class StreamingNmt {
     // Create a DataStream from TwitterSource filtered by deleted tweets
     // filter for en tweets
     DataStream<Tweet> twitterStream = env.addSource(twitterSource)
-        .filter((FilterFunction<String>) value -> value.contains("created_at")) // filter out deleted tweets
-        .flatMap(new TweetJsonConverter()) // convert JSON to Pojo
+        .filter((FilterFunction<String>) value -> value.contains("created_at"))
+        .flatMap(new TweetJsonConverter())
         .filter((FilterFunction<Tweet>) tweet -> langList.contains(tweet.getLanguage()) &&
         tweet.getText().length() > 100);
-           // filter for tweets containing a URL
-//        .filter((FilterFunction<Tweet>) value -> langList.contains(value.getLanguage())
-//            && TweetURLMatcher.checkUrlInTweet(value))
-//        // extract URL from tweet text
-//        .flatMap(new ExtractUrlFromTweetFunction())
-//        // extract html body content from URL
-//        .flatMap(new ExtractTextFromHTML())
-        // filter for URL redirects to tweets or zero content
-//        .((FilterFunction<Tweet>) value -> value.getText().length() > 0);
 
-   /// Language Detect and Split
 //    SplitStream<String> splitStream = twitterStream.map(new LanguageDetectorFunction())
 //        .split(new LanguageSelector());
 
@@ -122,7 +115,7 @@ public class StreamingNmt {
         .timeWindowAll(Time.seconds(100))
         .apply(new SockeyeTranslateFunction());
 
-    sentenceStream.print();
+//    sentenceStream.print();
 
     // execute program
     env.execute("Executing Streaming Machine Translation");
