@@ -112,7 +112,8 @@ public class StreamingNmt {
 
     DataStream<Tuple2<String, String>> sentenceStream =
         twitterStream.map(new SentenceDetectorFunction(deSentenceModel))
-        .timeWindowAll(Time.seconds(100))
+        .keyBy(0)
+        .countWindowAll(2)
         .apply(new SockeyeTranslateFunction());
 
 //    sentenceStream.print();

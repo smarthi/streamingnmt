@@ -10,7 +10,10 @@ import de.dws.berlin.thrift.Translate;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.RichAllWindowFunction;
+import org.apache.flink.streaming.api.functions.windowing.RichWindowFunction;
+import org.apache.flink.streaming.api.windowing.windows.GlobalWindow;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.streaming.api.windowing.windows.Window;
 import org.apache.flink.util.Collector;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -18,7 +21,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
 
-public class SockeyeTranslateFunction extends RichAllWindowFunction<Tuple2<String, String[]>, Tuple2<String,String>, TimeWindow> {
+public class SockeyeTranslateFunction extends RichAllWindowFunction<Tuple2<String, String[]>, Tuple2<String,String>, GlobalWindow> {
 
   private String host;
   private int port;
@@ -41,7 +44,7 @@ public class SockeyeTranslateFunction extends RichAllWindowFunction<Tuple2<Strin
   }
 
   @Override
-  public void apply(TimeWindow window, Iterable<Tuple2<String, String[]>> iterable,
+  public void apply(GlobalWindow window, Iterable<Tuple2<String, String[]>> iterable,
                     Collector<Tuple2<String, String>> collector) throws Exception {
 
     List<String> sentencesList = new ArrayList<>();
